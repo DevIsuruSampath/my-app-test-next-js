@@ -28,12 +28,28 @@ export default function HomePage() {
 
   useEffect(() => {
     const saved = localStorage.getItem("nexa-theme");
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const applyTheme = (next: "light" | "dark") => {
+      setTheme(next);
+      document.documentElement.classList.toggle("dark", next === "dark");
+    };
+
     if (saved === "light" || saved === "dark") {
-      setTheme(saved);
-      document.documentElement.classList.toggle("dark", saved === "dark");
+      applyTheme(saved);
     } else {
-      document.documentElement.classList.add("dark");
+      applyTheme(media.matches ? "dark" : "light");
     }
+
+    const onSystemThemeChange = (e: MediaQueryListEvent) => {
+      const stored = localStorage.getItem("nexa-theme");
+      if (stored !== "light" && stored !== "dark") {
+        applyTheme(e.matches ? "dark" : "light");
+      }
+    };
+
+    media.addEventListener("change", onSystemThemeChange);
+    return () => media.removeEventListener("change", onSystemThemeChange);
   }, []);
 
   useEffect(() => {
