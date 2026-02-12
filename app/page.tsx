@@ -1,256 +1,172 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { Bot, Gauge, Layers, ShieldCheck, Sparkles } from "lucide-react";
+import { motion } from "motion/react";
 
-type RevealProps = { children: ReactNode; delay?: number };
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
-function Reveal({ children, delay = 0 }: RevealProps) {
+const fadeUp = {
+  initial: { opacity: 0, y: 18 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.25 },
+  transition: { duration: 0.55, ease: "easeOut" as const },
+};
+
+const features = [
+  {
+    icon: Bot,
+    title: "AI Task Automation",
+    text: "Automate repetitive workflows with smart prompts and execution pipelines.",
+    className: "md:col-span-2",
+  },
+  {
+    icon: Gauge,
+    title: "Realtime Insights",
+    text: "Track performance and productivity with fast visual analytics.",
+    className: "",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Secure by Design",
+    text: "Built-in guardrails and policy-aware actions for safer delivery.",
+    className: "",
+  },
+  {
+    icon: Layers,
+    title: "Scalable Integrations",
+    text: "Connect tools, APIs, and internal services without friction.",
+    className: "md:col-span-2",
+  },
+];
+
+const plans = [
+  { name: "Starter", price: "$0", desc: "For solo builders" },
+  { name: "Pro", price: "$29", desc: "For fast-moving teams", popular: true },
+  { name: "Enterprise", price: "Custom", desc: "For compliance and scale" },
+];
+
+export default function Page() {
   return (
-    <div
-      className="animate-[fadeUp_.7s_ease-out_forwards] opacity-0 [animation-delay:var(--d)]"
-      style={{ ["--d" as string]: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
-
-export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [typed, setTyped] = useState("");
-
-  const codeDemo = useMemo(
-    () =>
-      `> npx create-nexaflow-app\n\n✔ ui-system initialized\n✔ auth-flow ready\n✔ analytics connected\n✔ deploy profile configured\n\n🚀 Ready to launch`,
-    []
-  );
-
-  useEffect(() => {
-    const saved = localStorage.getItem("nexa-theme");
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const applyTheme = (next: "light" | "dark") => {
-      setTheme(next);
-      document.documentElement.classList.toggle("dark", next === "dark");
-    };
-
-    if (saved === "light" || saved === "dark") {
-      applyTheme(saved);
-    } else {
-      applyTheme(media.matches ? "dark" : "light");
-    }
-
-    const onSystemThemeChange = (e: MediaQueryListEvent) => {
-      const stored = localStorage.getItem("nexa-theme");
-      if (stored !== "light" && stored !== "dark") {
-        applyTheme(e.matches ? "dark" : "light");
-      }
-    };
-
-    media.addEventListener("change", onSystemThemeChange);
-    return () => media.removeEventListener("change", onSystemThemeChange);
-  }, []);
-
-  useEffect(() => {
-    let i = 0;
-    const timer = setInterval(() => {
-      i += 1;
-      setTyped(codeDemo.slice(0, i));
-      if (i >= codeDemo.length) clearInterval(timer);
-    }, 14);
-
-    return () => clearInterval(timer);
-  }, [codeDemo]);
-
-  function toggleTheme() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("nexa-theme", next);
-    document.documentElement.classList.toggle("dark", next === "dark");
-  }
-
-  const features = [
-    {
-      title: "Design System First",
-      text: "Consistent spacing, typography, and components from day one.",
-    },
-    {
-      title: "API-Ready Workflow",
-      text: "Clear frontend/backend boundaries and scalable integration patterns.",
-    },
-    {
-      title: "Secure by Default",
-      text: "Strong UX with validation, clear feedback, and safe auth flow.",
-    },
-  ];
-
-  const pricing = [
-    { name: "Starter", price: "$0", desc: "For personal projects and learning." },
-    { name: "Pro", price: "$19", desc: "For teams shipping every week.", popular: true },
-    { name: "Enterprise", price: "Custom", desc: "For scale, compliance, and SLAs." },
-  ];
-
-  return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_20%_-10%,#7c5cff33,transparent_40%),radial-gradient(circle_at_85%_0%,#22d3ee33,transparent_38%)] bg-slate-950 text-slate-100 dark:bg-slate-950 dark:text-slate-100">
-      <style>{`
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(18px);} to {opacity:1; transform: translateY(0);} }
-      `}</style>
-
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/65 backdrop-blur-xl">
-        <nav className="mx-auto flex h-16 w-[92%] max-w-6xl items-center justify-between">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_10%_-10%,#6366f144,transparent_35%),radial-gradient(circle_at_90%_0%,#0ea5e944,transparent_35%)] bg-slate-950 text-slate-100">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-xl">
+        <nav className="mx-auto grid h-16 w-[92%] max-w-6xl grid-cols-2 items-center md:grid-cols-3">
           <div className="flex items-center gap-2 font-semibold">
-            <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-400" />
+            <Sparkles className="h-5 w-5 text-indigo-400" />
             NexaFlow
           </div>
-
-          <button
-            aria-label="Toggle menu"
-            className="rounded-lg border border-white/15 px-3 py-1.5 text-sm md:hidden"
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            Menu
-          </button>
-
-          <div className="hidden items-center gap-6 md:flex">
-            <a href="#features" className="text-sm text-slate-300 hover:text-white">Features</a>
-            <a href="#pricing" className="text-sm text-slate-300 hover:text-white">Pricing</a>
-            <a href="#faq" className="text-sm text-slate-300 hover:text-white">FAQ</a>
-            <button
-              aria-label="Toggle theme"
-              onClick={toggleTheme}
-              className="rounded-lg border border-white/15 px-3 py-1.5 text-sm"
-            >
-              {theme === "dark" ? "Light" : "Dark"}
-            </button>
-            <button className="rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20">
-              Get Started
-            </button>
+          <div className="hidden items-center justify-center gap-7 text-sm text-slate-300 md:flex">
+            <a href="#features" className="hover:text-white">Features</a>
+            <a href="#pricing" className="hover:text-white">Pricing</a>
+            <a href="#contact" className="hover:text-white">Contact</a>
+          </div>
+          <div className="justify-self-end">
+            <Button size="sm">Get Started</Button>
           </div>
         </nav>
-
-        {menuOpen && (
-          <div className="border-t border-white/10 px-4 py-3 md:hidden">
-            <div className="flex flex-col gap-2">
-              <a href="#features" className="rounded-lg px-2 py-1 hover:bg-white/10">Features</a>
-              <a href="#pricing" className="rounded-lg px-2 py-1 hover:bg-white/10">Pricing</a>
-              <a href="#faq" className="rounded-lg px-2 py-1 hover:bg-white/10">FAQ</a>
-              <button onClick={toggleTheme} className="rounded-lg border border-white/15 px-2 py-1 text-left">
-                Switch to {theme === "dark" ? "Light" : "Dark"}
-              </button>
-            </div>
-          </div>
-        )}
       </header>
 
       <main className="mx-auto w-[92%] max-w-6xl">
-        <section className="grid gap-8 py-16 md:grid-cols-2 md:items-center">
-          <Reveal>
-            <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-cyan-200">
-              Premium UI • Conversion Focused
-            </span>
-            <h1 className="mt-4 text-4xl font-black leading-tight md:text-6xl">
-              Build and ship faster with
-              <span className="bg-gradient-to-r from-violet-300 to-cyan-300 bg-clip-text text-transparent"> beautiful UX</span>
-              .
+        <section className="py-16 md:py-24">
+          <motion.div {...fadeUp} className="mx-auto max-w-3xl text-center">
+            <h1 className="text-4xl font-black leading-tight md:text-6xl">
+              Scale your Workflow with AI
             </h1>
-            <p className="mt-4 max-w-xl text-slate-300">
-              NexaFlow helps product teams launch polished interfaces faster with modern design patterns, smart automation, and clean developer workflows.
+            <p className="mx-auto mt-4 max-w-2xl text-slate-300 md:text-lg">
+              Build faster, automate smarter, and ship confidently with a modern workspace built for high-performance teams.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <button className="rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 px-5 py-3 font-semibold text-white shadow-lg shadow-cyan-500/20">
-                Start Free
-              </button>
-              <button className="rounded-xl border border-white/20 bg-white/5 px-5 py-3 font-semibold hover:bg-white/10">
-                See Demo
-              </button>
+          </motion.div>
+
+          <motion.div
+            {...fadeUp}
+            transition={{ ...fadeUp.transition, delay: 0.15 }}
+            className="mt-10 rounded-2xl border border-white/15 bg-gradient-to-br from-white/10 to-white/5 p-4 backdrop-blur-md md:p-6"
+          >
+            <div className="h-[300px] rounded-xl border border-dashed border-indigo-400/40 bg-slate-900/70 md:h-[420px] flex items-center justify-center text-slate-400">
+              Dashboard Screenshot Placeholder
             </div>
-          </Reveal>
+          </motion.div>
+        </section>
 
-          <Reveal delay={120}>
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-4 shadow-2xl shadow-cyan-900/20 backdrop-blur-xl">
-              <div className="rounded-xl border border-white/15 bg-slate-900">
-                <div className="flex gap-2 border-b border-white/10 p-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                </div>
-                <pre className="min-h-52 whitespace-pre-wrap p-4 text-sm text-cyan-100">{typed}</pre>
-              </div>
+        <section id="features" className="py-12 md:py-16">
+          <motion.h2 {...fadeUp} className="text-3xl font-bold md:text-4xl">
+            Built for modern teams
+          </motion.h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={feature.title}
+                  {...fadeUp}
+                  transition={{ ...fadeUp.transition, delay: index * 0.08 }}
+                  className={feature.className}
+                >
+                  <Card className="h-full">
+                    <CardHeader>
+                      <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/15 text-indigo-300">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <CardTitle>{feature.title}</CardTitle>
+                      <CardDescription>{feature.text}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section id="pricing" className="py-12 md:py-16">
+          <motion.h2 {...fadeUp} className="text-3xl font-bold md:text-4xl">
+            Pricing that scales
+          </motion.h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {plans.map((plan, i) => (
+              <motion.div key={plan.name} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.08 }}>
+                <Card className={plan.popular ? "border-indigo-400/60 ring-1 ring-indigo-400/40" : ""}>
+                  <CardHeader>
+                    <CardTitle className="text-xl">{plan.name}</CardTitle>
+                    <CardDescription>{plan.desc}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-4xl font-black">{plan.price}</p>
+                    <Button className="mt-5 w-full" variant={plan.popular ? "default" : "outline"}>
+                      Choose {plan.name}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section id="contact" className="py-16">
+          <motion.div
+            {...fadeUp}
+            className="rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-500 p-6 md:p-10"
+          >
+            <div className="mx-auto max-w-3xl text-center">
+              <h3 className="text-3xl font-bold text-white md:text-4xl">Stay in the loop</h3>
+              <p className="mt-2 text-indigo-100">
+                Get product updates, launch templates, and practical growth playbooks.
+              </p>
+              <form className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Input
+                  type="email"
+                  required
+                  placeholder="Enter your email"
+                  className="border-white/35 bg-white/20 text-white placeholder:text-indigo-100/80"
+                />
+                <Button variant="secondary" className="bg-white text-indigo-700 hover:bg-indigo-50">
+                  Subscribe
+                </Button>
+              </form>
             </div>
-          </Reveal>
-        </section>
-
-        <section id="features" className="py-16">
-          <Reveal>
-            <h2 className="text-3xl font-bold md:text-4xl">Everything your team needs</h2>
-            <p className="mt-2 text-slate-300">Fast, clean, and scalable UI foundations.</p>
-          </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {features.map((f, i) => (
-              <Reveal key={f.title} delay={80 + i * 80}>
-                <article className="h-full rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/50">
-                  <h3 className="text-lg font-semibold">{f.title}</h3>
-                  <p className="mt-2 text-sm text-slate-300">{f.text}</p>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section id="pricing" className="py-16">
-          <Reveal>
-            <h2 className="text-3xl font-bold md:text-4xl">Simple pricing</h2>
-          </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {pricing.map((p, i) => (
-              <Reveal key={p.name} delay={80 + i * 80}>
-                <article className={`rounded-2xl border bg-white/5 p-6 backdrop-blur ${p.popular ? "border-cyan-300/60 ring-1 ring-cyan-300/40" : "border-white/15"}`}>
-                  {p.popular && <span className="rounded-full bg-cyan-300/15 px-2 py-1 text-xs text-cyan-200">Most Popular</span>}
-                  <h3 className="mt-2 text-xl font-semibold">{p.name}</h3>
-                  <p className="mt-2 text-3xl font-black">{p.price}<span className="text-base font-normal text-slate-400">{p.price.startsWith("$") ? "/mo" : ""}</span></p>
-                  <p className="mt-2 text-sm text-slate-300">{p.desc}</p>
-                  <button className={`mt-4 w-full rounded-xl px-4 py-2 font-semibold ${p.popular ? "bg-gradient-to-r from-violet-500 to-cyan-400" : "border border-white/20"}`}>
-                    Choose {p.name}
-                  </button>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section id="faq" className="py-16">
-          <Reveal>
-            <h2 className="text-3xl font-bold md:text-4xl">FAQ</h2>
-          </Reveal>
-          <div className="mt-6 space-y-3">
-            {[
-              ["Can I use this with my existing stack?", "Yes. It integrates cleanly with modern frontend/backend workflows."],
-              ["Is this mobile responsive?", "Yes, all sections are tuned for mobile, tablet, and desktop."],
-              ["How fast can I launch?", "Most teams ship their first polished version in hours, not days."],
-            ].map(([q, a], i) => (
-              <Reveal key={q} delay={80 + i * 60}>
-                <details className="rounded-xl border border-white/15 bg-white/5 p-4">
-                  <summary className="cursor-pointer font-semibold">{q}</summary>
-                  <p className="mt-2 text-sm text-slate-300">{a}</p>
-                </details>
-              </Reveal>
-            ))}
-          </div>
+          </motion.div>
         </section>
       </main>
-
-      <div className="fixed bottom-4 left-1/2 z-40 w-[92%] max-w-3xl -translate-x-1/2 rounded-2xl border border-white/15 bg-slate-900/80 p-3 backdrop-blur-xl">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="font-semibold">Ready to launch faster?</p>
-            <p className="text-xs text-slate-300">Start your premium landing flow in minutes.</p>
-          </div>
-          <button className="rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 px-4 py-2 text-sm font-semibold">
-            Start Free
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
