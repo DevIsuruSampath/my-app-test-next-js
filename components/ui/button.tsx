@@ -29,9 +29,10 @@ function Button({
   className,
   variant,
   size,
+  type,
   ...props
 }: React.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
-  return <button className={cn(buttonVariants({ variant, size, className }))} {...props} />;
+  return <button type={type ?? "button"} className={cn(buttonVariants({ variant, size, className }))} {...props} />;
 }
 
 export { Button, buttonVariants };
